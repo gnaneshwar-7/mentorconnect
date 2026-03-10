@@ -8,12 +8,38 @@ const app = express();
 connectDB();
 
 // CORS configuration
+const parseOrigins = (value) =>
+    (value || "")
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter(Boolean);
+
+const configuredOrigins = [
+    ...parseOrigins(process.env.FRONTEND_URL),
+    ...parseOrigins(process.env.FRONTEND_URLS),
+];
+
+const allowedOrigins =
+    process.env.NODE_ENV === "production"
+        ? configuredOrigins
+        : ["http://localhost:5173", "http://127.0.0.1:5173"];
+
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' 
-        ? process.env.FRONTEND_URL || 'https://your-frontend-url.vercel.app'
-        : 'http://localhost:5173',
+    origin: (origin, callback) => {
+        // Allow non-browser requests (health checks, curl, server-to-server)
+        if (!origin) return callback(null, true);
+
+        const isConfiguredOrigin = allowedOrigins.includes(origin);
+        const isVercelPreview = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+
+        if (isConfiguredOrigin || isVercelPreview) {
+            return callback(null, true);
+        }
+
+        return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     credentials: true,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
