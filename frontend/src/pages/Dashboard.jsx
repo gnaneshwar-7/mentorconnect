@@ -41,10 +41,10 @@ export default function Dashboard() {
           Overview
         </p>
         <h1 style={{ fontSize: 26, fontWeight: 700, color: "#f5f5f5", letterSpacing: "-0.5px" }}>
-          Good morning 👋
+          Your Mentorship Dashboard 🚀
         </h1>
         <p style={{ fontSize: 14, color: "#6b7280", marginTop: 4 }}>
-          Here's what's happening with your mentorship journey.
+          Connect with expert mentors and accelerate your career growth.
         </p>
       </div>
 
@@ -97,7 +97,7 @@ export default function Dashboard() {
             ) : sessions.length === 0 ? (
               <EmptySessions />
             ) : (
-              sessions.map((s, i) => <SessionRow key={s.id} session={s} index={i} />)
+              sessions.map((s, i) => <SessionRow key={s.id} session={s} index={i} compact />)
             )}
           </div>
         </div>

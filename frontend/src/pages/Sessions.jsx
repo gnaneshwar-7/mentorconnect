@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { fetchSessions, deleteSession, updateSession } from "@/services/api";
-import { Calendar, Filter, Trash2 } from "lucide-react";
+import { fetchSessions, deleteSession } from "@/services/api";
+import { Calendar, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import SessionRow from "@/components/sessions/SessionRow";
-import { format } from "date-fns";
 
-const tabs = ["all", "upcoming", "completed", "cancelled"];
+const tabs = ["all", "upcoming", "missed", "completed", "cancelled"];
 
 export default function Sessions() {
   const { toast } = useToast();
@@ -37,23 +36,6 @@ export default function Sessions() {
       toast({
         title: "Error",
         description: error.message || 'Failed to delete session',
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleStatusChange = async (sessionId, newStatus) => {
-    try {
-      await updateSession(sessionId, { status: newStatus });
-      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, status: newStatus } : s));
-      toast({
-        title: "Success",
-        description: `Session status updated to ${newStatus}.`,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message || 'Failed to update session',
         variant: "destructive",
       });
     }
@@ -103,7 +85,7 @@ export default function Sessions() {
         ) : (
           filtered.map((s, i) => (
             <div key={s.id} style={{ position: "relative" }}>
-              <SessionRow session={s} index={i} onStatusChange={handleStatusChange} />
+              <SessionRow session={s} index={i} />
               <button
                 onClick={() => handleDelete(s.id)}
                 style={{

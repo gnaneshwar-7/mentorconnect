@@ -19,6 +19,7 @@ export default function Login() {
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in.",
+        duration: 2500,
       });
       navigate("/");
     } catch (error) {

@@ -104,7 +104,12 @@ export default function BookSessionModal({ mentor, onClose, onSuccess }) {
       display: "flex", alignItems: "center", justifyContent: "center",
       padding: 16,
     }}
-      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          e.stopPropagation();
+          onClose();
+        }
+      }}
     >
       <div style={{
         background: "#1a1a1a", border: "1px solid #2a2a2a",
@@ -119,7 +124,28 @@ export default function BookSessionModal({ mentor, onClose, onSuccess }) {
             <p style={{ fontSize: 15, fontWeight: 600, color: "#f5f5f5" }}>Book a Session</p>
             <p style={{ fontSize: 12, color: "#6b7280", marginTop: 2 }}>with {mentor.name}</p>
           </div>
-          <button onClick={onClose} style={{ background: "#252525", border: "none", borderRadius: 8, width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onClose();
+            }} 
+            type="button"
+            style={{ 
+              background: "#252525", 
+              border: "none", 
+              borderRadius: 8, 
+              width: 30, 
+              height: 30, 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center", 
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = "#333333"}
+            onMouseLeave={e => e.currentTarget.style.background = "#252525"}
+          >
             <X size={14} color="#9ca3af" />
           </button>
         </div>

@@ -1,5 +1,27 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+const SOON_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+const toFrontendStatus = (status, datetime) => {
+  const normalized = (status || 'Scheduled').toLowerCase();
+
+  if (normalized === 'cancelled') return 'cancelled';
+  if (normalized === 'completed') return 'completed';
+
+  const sessionDate = datetime ? new Date(datetime) : null;
+  if (sessionDate && !Number.isNaN(sessionDate.getTime()) && sessionDate < new Date()) {
+    return 'missed';
+  }
+
+  return 'upcoming';
+};
+
+const toBackendStatus = (status) => {
+  if (status === 'completed') return 'Completed';
+  if (status === 'cancelled') return 'Cancelled';
+  return 'Scheduled';
+};
+
 // Get auth token from localStorage
 const getAuthToken = () => localStorage.getItem('auth_token');
 
@@ -36,10 +58,17 @@ const transformMentor = (mentor) => ({
 const transformSession = (session) => {
   const mentorName = session.mentor?.name || session.mentor_name || 'Unknown';
   const mentorId = session.mentor?._id || session.mentor;
-  const rawStatus = (session.status || 'Scheduled').toLowerCase();
-  const normalizedStatus = rawStatus === 'scheduled' ? 'upcoming' : rawStatus;
+  const sessionDate = session.datetime ? new Date(session.datetime) : null;
+  const normalizedStatus = toFrontendStatus(session.status, session.datetime);
+  const isValidDate = !!sessionDate && !Number.isNaN(sessionDate.getTime());
+  const isSoon =
+    normalizedStatus === 'upcoming' &&
+    isValidDate &&
+    sessionDate.getTime() - Date.now() <= SOON_WINDOW_MS &&
+    sessionDate.getTime() - Date.now() >= 0;
 
   return {
+    ...session,
     id: session._id,
     mentor_id: mentorId,
     mentor_name: mentorName,
@@ -49,9 +78,9 @@ const transformSession = (session) => {
     date: session.datetime,
     time: session.datetime ? new Date(session.datetime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : null,
     status: normalizedStatus,
+    is_soon: isSoon,
     priority: (session.priority || 'medium').toLowerCase(),
     mode: session.mode,
-    ...session
   };
 };
 
@@ -145,10 +174,15 @@ export const deleteSession = async (sessionId) => {
 // Update a session
 export const updateSession = async (sessionId, sessionData) => {
   try {
+    const payload = {
+      ...sessionData,
+      ...(sessionData?.status && { status: toBackendStatus(sessionData.status) }),
+    };
+
     const response = await fetch(`${API_BASE_URL}/sessions/${sessionId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(sessionData),
+      body: JSON.stringify(payload),
     });
     if (!response.ok) throw new Error('Failed to update session');
     return await response.json();
