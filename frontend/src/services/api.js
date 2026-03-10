@@ -1,5 +1,18 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://mentorconnect-gl70.onrender.com/api';
 
+const parseJsonSafe = async (response) => {
+  const text = await response.text();
+
+  try {
+    return text ? JSON.parse(text) : null;
+  } catch {
+    return {
+      _invalidJson: true,
+      _raw: text,
+    };
+  }
+};
+
 const SOON_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 const toFrontendStatus = (status, datetime) => {
@@ -202,7 +215,12 @@ export const register = async (userData) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
     });
-    const data = await response.json();
+    const data = await parseJsonSafe(response);
+
+    if (data?._invalidJson) {
+      throw new Error('Server returned HTML instead of JSON. Check VITE_API_URL and backend deployment status.');
+    }
+
     if (!response.ok) {
       const message = data.message || data.error || 'Registration failed';
       throw new Error(message);
@@ -226,7 +244,12 @@ export const login = async (credentials) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
     });
-    const data = await response.json();
+    const data = await parseJsonSafe(response);
+
+    if (data?._invalidJson) {
+      throw new Error('Server returned HTML instead of JSON. Check VITE_API_URL and backend deployment status.');
+    }
+
     if (!response.ok) {
       const message = data.message || data.error || 'Login failed';
       throw new Error(message);
