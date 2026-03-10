@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://mentorconnect-gl70.onrender.com/api';
 
 const SOON_WINDOW_MS = 24 * 60 * 60 * 1000;
 
