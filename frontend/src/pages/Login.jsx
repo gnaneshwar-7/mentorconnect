@@ -18,12 +18,24 @@ export default function Login() {
     try {
       await login(form);
 
-      if (window.PasswordCredential && navigator.credentials?.store && formRef.current) {
+      if (window.PasswordCredential && navigator.credentials?.store) {
         try {
-          const credential = new window.PasswordCredential(formRef.current);
+          const credential = new window.PasswordCredential({
+            id: form.email,
+            password: form.password,
+            name: form.email,
+          });
           await navigator.credentials.store(credential);
         } catch {
-          // Ignore browser password manager failures and continue login flow.
+          // Fallback to form-based credential extraction for broader support.
+          if (formRef.current) {
+            try {
+              const credential = new window.PasswordCredential(formRef.current);
+              await navigator.credentials.store(credential);
+            } catch {
+              // Ignore browser password manager failures and continue login flow.
+            }
+          }
         }
       }
 
