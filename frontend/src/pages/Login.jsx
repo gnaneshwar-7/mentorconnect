@@ -98,13 +98,15 @@ export default function Login() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <form onSubmit={handleSubmit} autoComplete="on" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={{ position: "relative" }}>
             <Mail size={16} color="#6b7280" style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)" }} />
             <input
               required
+              name="email"
               type="email"
               placeholder="Email address"
+              autoComplete="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               style={inputStyle}
@@ -116,8 +118,10 @@ export default function Login() {
             <Lock size={16} color="#6b7280" style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)" }} />
             <input
               required
+              name="password"
               type="password"
               placeholder="Password"
+              autoComplete="current-password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               style={inputStyle}
