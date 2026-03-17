@@ -1,4 +1,4 @@
-import { Star, Clock, Briefcase, ExternalLink } from "lucide-react";
+import { Star, Clock, Briefcase } from "lucide-react";
 
 const availabilityConfig = {
   available: { label: "Available", color: "#10b981", bg: "rgba(16,185,129,0.1)" },

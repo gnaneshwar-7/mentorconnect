@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchMentors, fetchSessions } from "@/services/api";
-import { Users, Calendar, TrendingUp, Zap, ArrowRight, Plus } from "lucide-react";
+import { Users, Calendar, TrendingUp, Zap, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import StatCard from "@/components/ui/StatCard";

@@ -1,4 +1,4 @@
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 
 const selectStyle = {
   padding: "8px 12px", background: "#1a1a1a",

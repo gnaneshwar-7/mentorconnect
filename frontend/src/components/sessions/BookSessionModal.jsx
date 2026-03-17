@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Calendar, Clock, FileText, Zap } from "lucide-react";
+import { X, Zap } from "lucide-react";
 import { bookSession } from "@/services/api";
 import { useToast } from "@/components/ui/use-toast";
 

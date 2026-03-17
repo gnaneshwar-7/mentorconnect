@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchMentors, createMentor } from "@/services/api";
-import { Plus, X, Star, Users } from "lucide-react";
+import { Plus, X, Users } from "lucide-react";
 import MentorCard from "@/components/mentors/MentorCard";
 import MentorFilters from "@/components/mentors/MentorFilters";
 import BookSessionModal from "@/components/sessions/BookSessionModal";

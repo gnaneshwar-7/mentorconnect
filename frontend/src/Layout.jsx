@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { useAuth } from "@/lib/AuthContext";
 import {
@@ -13,9 +13,7 @@ import {
   ChevronRight,
   Zap,
   Menu,
-  X,
-  LogOut,
-  User as UserIcon
+  LogOut
 } from "lucide-react";
 
 const navItems = [
