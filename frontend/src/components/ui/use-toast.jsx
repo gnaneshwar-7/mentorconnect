@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 const TOAST_LIMIT = 20;
-const TOAST_REMOVE_DELAY = 1000000;
+const TOAST_REMOVE_DELAY = 3000; // Default 3 seconds, can be overridden per toast
 
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
@@ -112,6 +112,7 @@ function dispatch(action) {
 
 function toast({ ...props }) {
   const id = genId();
+  const duration = props.duration || TOAST_REMOVE_DELAY;
 
   const update = (props) =>
     dispatch({
@@ -133,6 +134,11 @@ function toast({ ...props }) {
       },
     },
   });
+
+  // Auto-dismiss after duration
+  setTimeout(() => {
+    dismiss();
+  }, duration);
 
   return {
     id,
