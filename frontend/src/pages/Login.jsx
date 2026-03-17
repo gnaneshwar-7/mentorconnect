@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useAuth } from "@/lib/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -8,6 +8,7 @@ export default function Login() {
   const { login, isLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const formRef = useRef(null);
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
@@ -16,6 +17,16 @@ export default function Login() {
     setLoading(true);
     try {
       await login(form);
+
+      if (window.PasswordCredential && navigator.credentials?.store && formRef.current) {
+        try {
+          const credential = new window.PasswordCredential(formRef.current);
+          await navigator.credentials.store(credential);
+        } catch {
+          // Ignore browser password manager failures and continue login flow.
+        }
+      }
+
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in.",
@@ -98,15 +109,15 @@ export default function Login() {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} autoComplete="on" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <form ref={formRef} onSubmit={handleSubmit} autoComplete="on" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={{ position: "relative" }}>
             <Mail size={16} color="#6b7280" style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)" }} />
             <input
               required
-              name="email"
+              name="username"
               type="email"
               placeholder="Email address"
-              autoComplete="email"
+              autoComplete="username"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               style={inputStyle}
